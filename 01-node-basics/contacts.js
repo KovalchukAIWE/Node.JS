@@ -1,28 +1,49 @@
 const fs = require ('fs');
-// const { dirname } = require('path');
 
 const path = require ('path');
 
-const contactsPath = path.join(__dirname, './dp/contacts.json');
+const contactsPath = path.join(__dirname, './db/contacts.json');
 
-console.log(contactsPath);
+// console.log(contactsPath);
 
-
-
-
-// //  задокументировать каждую функцию
-// function listContacts() {
-//     // ...твой код
-//   }
+function getContactList() {
+    const data = fs.readFileSync(contactsPath, "utf-8");
+    return JSON.parse(data);
+  }
   
-//   function getContactById(contactId) {
-//     // ...твой код
-//   }
+  function listContacts() {
+    const data = getContactList();
+    console.table(data);
+  }
   
-//   function removeContact(contactId) {
-//     // ...твой код
-//   }
+  function getContactById(contactId) {
+    const data = getContactList();
+    const contactById = data.find((contact) => contact.id === contactId);
+    console.table(contactById);
+  }
   
-//   function addContact(name, email, phone) {
-//     // ...твой код
-//   }
+  function removeContact(contactId) {
+    const data = getContactList();
+    const deletedContact = data.filter((contact) => contact.id !== contactId);
+    console.table(deletedContact);
+  
+  }
+  
+  function addContact(name, email, phone) {
+    const data = getContactList();
+    const appendContact = {
+      id: data.length + 1,
+      name,
+      email,
+      phone,
+    };
+    data.push(appendContact);
+    fs.writeFileSync(contactsPath, JSON.stringify(data, "", 2));
+  }
+  
+  module.exports = {
+    listContacts,
+    getContactById,
+    removeContact,
+    addContact,
+  };
